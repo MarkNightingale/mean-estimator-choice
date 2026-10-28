@@ -5,3 +5,5 @@ __pycache__/
 *.pkl
 !results/rule_grid.pkl
 !results/rule2_res.pkl
+.pytest_cache/
+.DS_Store

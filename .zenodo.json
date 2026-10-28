@@ -1,0 +1,12 @@
+{
+  "title": "Выбор оценки среднего уровня при выбросах с помощью машинного обучения: код, данные и результаты",
+  "upload_type": "software",
+  "license": "MIT",
+  "creators": [
+    {"name": "Шиманская, Елизавета Юрьевна", "affiliation": "Peter the Great St. Petersburg Polytechnic University"},
+    {"name": "Соловьев, Марк Владиславович", "affiliation": "Peter the Great St. Petersburg Polytechnic University"},
+    {"name": "Схведиани, Анги Ерастиевич", "affiliation": "Peter the Great St. Petersburg Polytechnic University", "orcid": "0000-0001-7171-7357"}
+  ],
+  "keywords": ["robust statistics", "estimator selection", "outliers", "machine learning", "Monte Carlo simulation", "official statistics"],
+  "description": "Code, data and results for a Monte Carlo study of choosing an estimator of the typical level (mean, median, trimmed mean, Huber and Hodges–Lehmann estimators) with a random forest and a two-condition rule, compared with Hogg's adaptive rule, and applied to five Rosstat regional indicators for 2025."
+}
