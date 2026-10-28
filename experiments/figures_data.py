@@ -39,8 +39,8 @@ with pd.ExcelWriter(FIGURES / "figures_data.xlsx") as xw:
                   "Содержание": ["Отношение MSE к MSE лучшей оценки сценария, среднее по сценариям (нормальное распределение и распределение Стьюдента, 250 сценариев)",
                                  "Средняя относительная ошибка правила из двух условий (равные веса), обучение на нормальном и Стьюдента",
                                  "То же с добавлением распределения Лапласа",
-                                 "Значения показателей по субъектам РФ за 2025 г. и робастная шкала"]}).to_excel(xw, "Описание", index=False)
-    f1.to_excel(xw, "Рис1", index=False)
-    for nm, d in f2.items(): d.to_excel(xw, nm)
-    f3.to_excel(xw, "Рис3", index=False)
+                                 "Значения показателей по субъектам РФ за 2025 г. и робастная шкала"]}).to_excel(xw, sheet_name="Описание", index=False)
+    f1.to_excel(xw, sheet_name="Рис1", index=False)
+    for nm, d in f2.items(): d.to_excel(xw, sheet_name=nm)
+    f3.to_excel(xw, sheet_name="Рис3", index=False)
 print(f1.round(2).to_string())
