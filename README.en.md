@@ -61,6 +61,14 @@ All random seeds are fixed. Large intermediate files (`store.pkl`, `rf_*.pkl`, ~
 
 Use **Cite this repository** on the right (from [CITATION.cff](CITATION.cff)). The paper reference will be added after publication.
 
+## Authors
+
+- **Elizaveta Yu. Shimanskaya** — Master’s Student
+- **Mark V. Solovev** — Assistant, Graduate School of Industrial Economics ([ORCID 0000-0003-4626-6595](https://orcid.org/0000-0003-4626-6595))
+- **Angi E. Skhvediani** — Cand. Sci. (Econ.), Associate Professor, Graduate School of Industrial Economics ([ORCID 0000-0001-7171-7357](https://orcid.org/0000-0001-7171-7357))
+
+Peter the Great St. Petersburg Polytechnic University, 29 Politekhnicheskaya St., St. Petersburg, 195251, Russia. Questions about the code: [Issues](https://github.com/MarkNightingale/mean-estimator-choice/issues).
+
 ## License
 
 Code: [MIT](LICENSE). Data: open data of Rosstat (Federal State Statistics Service of Russia); please cite the original source.

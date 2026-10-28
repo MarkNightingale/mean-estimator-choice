@@ -1,5 +1,9 @@
 # История изменений
 
+## После 1.1.0 — 2026-10-29
+
+- Сведения об авторах: должности и ORCID в README, CITATION.cff и .zenodo.json.
+
 ## 1.1.0 — 2026-10-28
 
 - Устанавливаемый пакет `estimator_choice`: `pip install git+https://github.com/MarkNightingale/mean-estimator-choice`, команда `choose-estimator`.
