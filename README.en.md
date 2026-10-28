@@ -13,7 +13,7 @@
 
 A couple of stray values can drag the arithmetic mean far from where most observations sit, while the median, safe under contamination, is noticeably noisier on tidy data. This repository has everything needed to see which of five location estimators wins where, whether a classifier can make that call from the sample itself, and how its advice collapses into two thresholds you can check by hand. The evidence: 625 Monte Carlo scenarios with 5,000 samples each.
 
-Code, data and results for a paper by E.Yu. Shimanskaya, M.V. Solovev and A.E. Skhvediani (Peter the Great St. Petersburg Polytechnic University). The paper is in preparation.
+Code, data and results for a paper by M.V. Solovev, E.Yu. Shimanskaya and A.E. Skhvediani (Peter the Great St. Petersburg Polytechnic University). The paper is in preparation.
 
 ## The two-condition rule
 
@@ -66,8 +66,8 @@ Use **Cite this repository** on the right (from [CITATION.cff](CITATION.cff)). T
 
 ## Authors
 
-- **Elizaveta Yu. Shimanskaya** — Master’s Student
 - **Mark V. Solovev** — Assistant, Graduate School of Industrial Economics ([ORCID 0000-0003-4626-6595](https://orcid.org/0000-0003-4626-6595))
+- **Elizaveta Yu. Shimanskaya** — Master’s Student
 - **Angi E. Skhvediani** — Cand. Sci. (Econ.), Associate Professor, Graduate School of Industrial Economics ([ORCID 0000-0001-7171-7357](https://orcid.org/0000-0001-7171-7357))
 
 Peter the Great St. Petersburg Polytechnic University, 29 Politekhnicheskaya St., St. Petersburg, 195251, Russia. Questions about the code: [Issues](https://github.com/MarkNightingale/mean-estimator-choice/issues).

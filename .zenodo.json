@@ -3,8 +3,8 @@
   "upload_type": "software",
   "license": "MIT",
   "creators": [
-    {"name": "Шиманская, Елизавета Юрьевна", "affiliation": "Peter the Great St. Petersburg Polytechnic University"},
     {"name": "Соловьев, Марк Владиславович", "affiliation": "Peter the Great St. Petersburg Polytechnic University", "orcid": "0000-0003-4626-6595"},
+    {"name": "Шиманская, Елизавета Юрьевна", "affiliation": "Peter the Great St. Petersburg Polytechnic University"},
     {"name": "Схведиани, Анги Ерастиевич", "affiliation": "Peter the Great St. Petersburg Polytechnic University", "orcid": "0000-0001-7171-7357"}
   ],
   "keywords": ["robust statistics", "estimator selection", "outliers", "machine learning", "Monte Carlo simulation", "official statistics"],
