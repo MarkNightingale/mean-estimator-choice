@@ -36,4 +36,9 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Whole pipeline in reduced form
-        run: make smoke
+        run: |
+          set -o pipefail
+          make smoke 2>&1 | tee smoke.log
+      - name: Show the end of the log on failure
+        if: failure()
+        run: echo "::error title=make smoke::$(tail -40 smoke.log | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g')"
