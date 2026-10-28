@@ -4,6 +4,8 @@ __pycache__/
 # большие промежуточные файлы (создаются скриптами)
 *.pkl
 !results/rule_grid.pkl
-!results/rule2_res.pkl
+!results/rule_results.pkl
 .pytest_cache/
 .DS_Store
+*.egg-info/
+build/

@@ -20,7 +20,7 @@ authors:
     orcid: "https://orcid.org/0000-0001-7171-7357"
 repository-code: "https://github.com/MarkNightingale/mean-estimator-choice"
 license: MIT
-version: 1.0.0
+version: 1.1.0
 date-released: "2026-10-28"
 keywords:
   - robust statistics

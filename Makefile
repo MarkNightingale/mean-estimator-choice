@@ -1,34 +1,36 @@
 PY ?= python
+X = $(PY) experiments
 
-.PHONY: all simulate models rules summary empirical tables figures assets quick test check help
+.PHONY: help all simulate models rules summary regions tables figures assets quick test check smoke
 
 help:  ## список команд
 	@grep -E "^[a-z]+:.*##" Makefile | sed -E "s/:.*## /\t/"
 
-all: simulate models rules summary empirical quick  ## полный расчёт с нуля (около часа)
+all: simulate models rules summary regions quick  ## полный расчёт с нуля (около 35 минут)
 
-simulate:  ## имитационный эксперимент: 625 сценариев x 5 000 выборок
-	$(PY) src/run2.py
+simulate:  ## шаг 1: 625 сценариев x 5 000 выборок
+	$(X)/simulate.py
 
-models:  ## случайный лес и логистическая регрессия, перекрёстная проверка
-	$(PY) src/ml2.py
+models:  ## шаг 2: случайный лес и логистическая регрессия
+	$(X)/train_models.py
 
-rules:  ## подбор порогов правила из двух условий
-	$(PY) src/rule2.py
+rules:  ## шаг 3: пороги правила из двух условий
+	$(X)/tune_rule.py
 
-summary:  ## сводная таблица по методам и смещение при односторонних выбросах
-	$(PY) src/tab2.py
-	$(PY) src/bias2.py
+summary:  ## шаг 4: сводная таблица, смещение, бутстреп-интервалы
+	$(X)/summarize.py
+	$(X)/bias.py
+	$(X)/bootstrap.py
 
-empirical:  ## региональные показатели и полусинтетический эксперимент
-	$(PY) src/emp2.py
+regions:  ## шаг 5: показатели Росстата и ошибки с лишним разрядом
+	$(X)/regions.py
 
 tables:  ## таблицы статьи из сохранённых результатов
-	$(PY) src/tables2.py
+	$(X)/tables.py
 
-figures:  ## рисунки статьи и их исходные данные
-	$(PY) src/figs2.py
-	$(PY) src/figdata.py
+figures:  ## рисунки статьи и их данные в Excel
+	$(X)/figures.py
+	$(X)/figures_data.py
 
 assets:  ## иллюстрации README и docs/results.md
 	$(PY) docs/make_assets.py
@@ -39,4 +41,9 @@ test:  ## автотесты
 	$(PY) -m pytest -q
 
 check: tables  ## таблицы из сохранённых результатов совпадают с опубликованными
-	git diff --exit-code results/tables2.json
+	git diff --exit-code results/tables.json
+
+smoke:  ## весь конвейер в сокращённом виде во временной папке (около 2 минут)
+	$(eval TMP := $(shell mktemp -d))
+	QUICK=1 RESULTS_DIR=$(TMP) FIGURES_DIR=$(TMP) $(MAKE) --no-print-directory simulate models rules summary regions tables figures
+	@echo "Сокращённый прогон прошёл: $(TMP)"

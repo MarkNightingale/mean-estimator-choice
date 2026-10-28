@@ -1,8 +1,9 @@
-"""Проверки правила из двух условий (src/choose.py)."""
+"""Проверки правила из двух условий (estimator_choice.rule)."""
 import numpy as np
 import pytest
 
-from choose import THRESHOLDS, choose_estimator
+from estimator_choice import THRESHOLDS, choose_estimator
+from estimator_choice.rule import main
 
 
 def test_clean_normal_sample_gets_huber():
@@ -43,3 +44,9 @@ def test_regional_wages_2025():
     w = pd.read_csv("data/wages_2025.csv")["wage"]
     r = choose_estimator(w)
     assert r["n"] == 85 and r["estimator"] == "median" and r["value"] == 75525
+
+
+def test_command_line(capsys):
+    main(["data/wages_2025.csv"])
+    out = capsys.readouterr().out
+    assert "Наблюдений: 85" in out and "медиана = 75 525" in out

@@ -7,6 +7,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-1f6fae)](LICENSE)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-1f6fae)](requirements.txt)
 [![Cite](https://img.shields.io/badge/cite-CITATION.cff-c0661a)](CITATION.cff)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/MarkNightingale/mean-estimator-choice/blob/main/notebooks/demo.ipynb)
 
 **[Русская версия](README.md)**. Figures and detailed documentation are in Russian.
 
@@ -20,11 +21,14 @@ Code, data and results for a paper by E.Yu. Shimanskaya, M.V. Solovev and A.E. S
 
 MAD is scaled by 1.483. This is the cautious version, recommended when nothing is known about the data in advance. The soft version (16% and 0.30 MAD) is more precise on clean data but can miss close one-sided outliers.
 
+Try it in the [Colab notebook](https://colab.research.google.com/github/MarkNightingale/mean-estimator-choice/blob/main/notebooks/demo.ipynb) without installing anything, or locally:
+
 ```bash
-python src/choose.py data/wages_2025.csv            # or: --variant soft
+pip install git+https://github.com/MarkNightingale/mean-estimator-choice
+choose-estimator data/wages_2025.csv            # or: --variant soft
 ```
 
-From Python: `from choose import choose_estimator; choose_estimator(values)`.
+From Python: `from estimator_choice import choose_estimator; choose_estimator(values)`.
 
 ## Findings
 
@@ -36,7 +40,7 @@ From Python: `from choose import choose_estimator; choose_estimator(values)`.
 *Normal and Student (3 df) distributions, 250 scenarios, scenario-grouped cross-validation. A value of 1 means the precision of the scenario-best estimator.*
 
 - **No estimator is best everywhere.** The median wins with outliers, the Huber estimator without them, the mean almost never.
-- **The model beats every fixed estimator** on average and in the worst case, but the gain over the median is modest: 5% vs 11% excess MSE.
+- **The model beats every fixed estimator** on average and in the worst case, but the gain over the median is modest: 5% vs 11% excess MSE (scenario bootstrap 95% interval for the difference: 3.9–7.2 percentage points).
 - **Hogg's (1974) rule fails with one-sided outliers**: with 20% of them its MSE is 8.6 times the minimum.
 - **Transfer is partial.** On the Laplace and Student (2 df) distributions the model trails the median by 5–8%; on the logistic it beats it.
 - **Regional data.** For five Rosstat indicators in 2025 almost all procedures choose the median; the unweighted mean exceeds it by 7–41%.
@@ -47,10 +51,11 @@ From Python: `from choose import choose_estimator; choose_estimator(values)`.
 pip install -r requirements.txt -r requirements-dev.txt
 make quick   # tables and figures from saved results, seconds
 make test    # unit tests
-make all     # full run from scratch, about an hour
+make smoke   # the whole pipeline in reduced form, about 2 minutes
+make all     # full run from scratch, about 35 minutes
 ```
 
-All random seeds are fixed. Large intermediate files (`store2.pkl`, `rf_*.pkl`, ~370 MB) are not stored; `run2.py` and `ml2.py` recreate them. See [docs/methodology.md](docs/methodology.md) for the design and [docs/results.md](docs/results.md) for all tables.
+All random seeds are fixed. Large intermediate files (`store.pkl`, `rf_*.pkl`, ~370 MB) are not stored; `experiments/simulate.py` and `experiments/train_models.py` recreate them. See [docs/methodology.md](docs/methodology.md) for the design and [docs/results.md](docs/results.md) for all tables.
 
 ## Citation
 

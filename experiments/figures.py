@@ -1,4 +1,6 @@
+"""Рисунки статьи (оттенки серого, 300 dpi) в figures/."""
 import numpy as np, pandas as pd, pickle
+from common import DATA, FIGURES, QUICK, RESULTS, quick
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -6,7 +8,7 @@ from matplotlib.ticker import FuncFormatter, FixedLocator, NullLocator
 comma = FuncFormatter(lambda v, p: (f"{v:g}").replace(".", ","))
 plt.rcParams.update({"font.family": "DejaVu Serif", "font.size": 10, "axes.edgecolor": "black",
                      "axes.labelcolor": "black", "xtick.color": "black", "ytick.color": "black"})
-L = pd.read_csv("results/long2.csv")
+L = pd.read_csv(RESULTS / "long.csv")
 tr = L[(L.setting == "A") & L.dist.isin(["normal", "t3"])]
 
 # ---------- Рис. 1 ----------
@@ -27,10 +29,10 @@ for ax, ot, title in zip(axes, ["sym", "one"], ["Симметричные выб
 axes[0].set_ylabel("MSE / MSE лучшей оценки (лог. шкала)")
 h, l = axes[0].get_legend_handles_labels()
 fig.legend(h, l, loc="lower center", ncol=3, frameon=False, fontsize=8.5)
-fig.tight_layout(rect=(0, 0.13, 1, 1)); fig.savefig("figures/fig1.png", dpi=300); plt.close(fig)
+fig.tight_layout(rect=(0, 0.13, 1, 1)); fig.savefig(FIGURES / "fig1.png", dpi=300); plt.close(fig)
 
 # ---------- Рис. 2: критерий подбора порогов правила ----------
-REL = pickle.load(open("results/rule_grid.pkl", "rb")); sc = pd.read_csv("results/scenarios2.csv")
+REL = pickle.load(open(RESULTS / "rule_grid.pkl", "rb")); sc = pd.read_csv(RESULTS / "scenarios.csv")
 A_GRID = np.round(np.arange(0.02, 0.21, 0.01), 2); B_GRID = np.round(np.arange(0.05, 0.61, 0.05), 2)
 def obj(dists):
     ids = sc.loc[sc.dist.isin(dists), "sid"]
@@ -51,13 +53,13 @@ for ax, dists, title in zip(axes, [["normal", "t3"], ["normal", "t3", "laplace"]
     ax.set_title(title, fontsize=10); ax.set_xlabel("Порог доли наблюдений за «усами», %")
     ax.yaxis.set_major_formatter(comma)
 axes[0].set_ylabel("Порог |средняя − медиана| / MAD")
-fig.tight_layout(); fig.savefig("figures/fig2.png", dpi=300); plt.close(fig)
+fig.tight_layout(); fig.savefig(FIGURES / "fig2.png", dpi=300); plt.close(fig)
 
 # ---------- Рис. 3: региональные показатели в робастной шкале ----------
 def load(p): return pd.read_csv(p, sep=";", header=None, names=["r", "v"]).v.to_numpy(float)
-IND = [("Заработная плата", pd.read_csv("data/wages_2025.csv").wage.to_numpy(float)),
-       ("Денежные доходы", load("data/income_2025.txt")), ("Уровень безработицы", load("data/unemp_2025.txt")),
-       ("Стоимость набора\nпродуктов", load("data/food_2025.txt")), ("Цена жилья\n(вторичный рынок)", load("data/housing_2025.txt"))]
+IND = [("Заработная плата", pd.read_csv(DATA / "wages_2025.csv").wage.to_numpy(float)),
+       ("Денежные доходы", load(DATA / "income_2025.txt")), ("Уровень безработицы", load(DATA / "unemp_2025.txt")),
+       ("Стоимость набора\nпродуктов", load(DATA / "food_2025.txt")), ("Цена жилья\n(вторичный рынок)", load(DATA / "housing_2025.txt"))]
 rng = np.random.default_rng(1)
 fig, ax = plt.subplots(figsize=(7.2, 4.1))
 for i, (lab, v) in enumerate(IND):
@@ -77,4 +79,4 @@ from matplotlib.lines import Line2D
 ax.legend([Line2D([], [], color="black", lw=1.8), Line2D([], [], marker="v", color="black", ls="none")],
           ["медиана", "невзвешенная средняя"], loc="upper center", bbox_to_anchor=(0.5, -0.17), ncol=2, frameon=False, fontsize=8.5)
 ax.xaxis.set_major_formatter(comma); ax.grid(True, axis="x", color="0.9", lw=0.5)
-fig.tight_layout(); fig.savefig("figures/fig3.png", dpi=300); plt.close(fig)
+fig.tight_layout(); fig.savefig(FIGURES / "fig3.png", dpi=300); plt.close(fig)

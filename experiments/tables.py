@@ -1,6 +1,7 @@
-"""Строки таблиц статьи (v2) -> tables2.json; все числа берутся из расчётных файлов."""
+"""Строки таблиц статьи (results/tables.json); все числа берутся из расчётных файлов."""
 import pandas as pd, numpy as np, json
-L = pd.read_csv("results/long2.csv"); B = pd.read_csv("results/bias2.csv"); E = pd.read_csv("results/emp2.csv"); S = pd.read_csv("results/semi2.csv")
+from common import DATA, FIGURES, QUICK, RESULTS, quick
+L = pd.read_csv(RESULTS / "long.csv"); B = pd.read_csv(RESULTS / "bias.csv"); E = pd.read_csv(RESULTS / "regions.csv"); S = pd.read_csv(RESULTS / "semi.csv")
 def f(x, d=2):
     s = f"{x:,.{d}f}".replace(",", " ").replace(".", ",")
     return s
@@ -66,6 +67,6 @@ for k in K:
     for _, q in S[S.key == k].iterrows():
         rows.append([NM[k] if q.m == 2 else "", f"{int(q.m)}"] + [f(q[f"{e}_mean"], 1) for e in ("mean", "trim10", "huber", "hl", "median", "rf")])
 T["t6"] = rows
-json.dump(T, open("results/tables2.json", "w"), ensure_ascii=False, indent=1)
+json.dump(T, open(RESULTS / "tables.json", "w"), ensure_ascii=False, indent=1)
 for k, v in T.items():
     print(k); [print("  ", r) for r in v]

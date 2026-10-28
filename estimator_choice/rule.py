@@ -10,20 +10,19 @@
   soft (мягкое):                        a = 0,16; b = 0,30
 
 Пример использования из Python:
-    >>> from choose import choose_estimator
+    >>> from estimator_choice import choose_estimator
     >>> choose_estimator([10, 11, 12, 11, 10, 95])["estimator"]
     'median'
 
 Из командной строки:
-    python src/choose.py data/wages_2025.csv
-    python src/choose.py data/unemp_2025.txt --variant soft
+    python -m estimator_choice data/wages_2025.csv
+    python -m estimator_choice data/unemp_2025.txt --variant soft
 """
 import argparse
-import sys
 
 import numpy as np
 
-import sim
+from . import estimators as est
 
 THRESHOLDS = {"cautious": (0.05, 0.20), "soft": (0.16, 0.30)}
 
@@ -34,7 +33,7 @@ def summary(x):
     x = x[np.isfinite(x)]
     if x.size < 3:
         raise ValueError("нужно хотя бы 3 наблюдения")
-    feats = sim.features(x[None, :])[0]
+    feats = est.features(x[None, :])[0]
     return dict(n=int(x.size), share_outside=float(feats[5]), mean_median_gap=float(feats[6]))
 
 
@@ -51,9 +50,9 @@ def choose_estimator(x, variant="cautious"):
     x = x[np.isfinite(x)]
     s = summary(x)
     use_huber = s["share_outside"] <= a + 1e-9 and s["mean_median_gap"] <= b
-    est = {"mean": float(x.mean()), "median": float(np.median(x)), "huber": float(sim.est_huber(x[None, :])[0])}
+    values = {"mean": float(x.mean()), "median": float(np.median(x)), "huber": float(est.est_huber(x[None, :])[0])}
     name = "huber" if use_huber else "median"
-    return dict(estimator=name, value=est[name], variant=variant, **s, estimates=est)
+    return dict(estimator=name, value=values[name], variant=variant, **s, estimates=values)
 
 
 def _read(path):
@@ -69,7 +68,7 @@ def _fmt(v):
 
 
 def main(argv=None):
-    p = argparse.ArgumentParser(description="Выбор оценки типичного уровня по правилу из двух условий")
+    p = argparse.ArgumentParser(prog="python -m estimator_choice", description="Выбор оценки типичного уровня по правилу из двух условий")
     p.add_argument("path", help="CSV (берётся последний числовой столбец) или TXT в формате «название;значение»")
     p.add_argument("--variant", choices=list(THRESHOLDS), default="cautious")
     args = p.parse_args(argv)
@@ -81,6 +80,3 @@ def main(argv=None):
     print(f"Средняя {_fmt(e['mean'])}; медиана {_fmt(e['median'])}; оценка Хьюбера {_fmt(e['huber'])}")
     print(f"Правило ({r['variant']}): {ru[r['estimator']]} = {_fmt(r['value'])}")
 
-
-if __name__ == "__main__":
-    sys.exit(main())

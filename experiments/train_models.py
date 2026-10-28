@@ -1,3 +1,8 @@
+"""Шаг 2. Случайный лес и логистическая регрессия, выбирающие оценку по характеристикам выборки.
+
+Перекрёстная проверка по сценариям (StratifiedGroupKFold, 5 частей); два варианта обучающих данных:
+A — нормальное и Стьюдента (3 ст. св.), B — то же с распределением Лапласа.
+"""
 import numpy as np, pandas as pd, pickle, time
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
@@ -5,13 +10,14 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline
 from sklearn.tree import DecisionTreeClassifier, export_text
 from sklearn.model_selection import StratifiedGroupKFold
-import sim2
+from common import DATA, FIGURES, QUICK, RESULTS, quick
+from estimator_choice import estimators as est
 
-df = pd.read_csv("results/scenarios2.csv")
-store = pickle.load(open("results/store2.pkl", "rb"))
-EST = sim2.EST_NAMES
+df = pd.read_csv(RESULTS / "scenarios.csv")
+store = pickle.load(open(RESULTS / "store.pkl", "rb"))
+EST = est.EST_NAMES
 LAB = {e: i for i, e in enumerate(EST)}
-N_PER = 400
+N_PER = quick(400, 40)
 rng = np.random.default_rng(7)
 SETTINGS = {"A": (["normal", "t3"], ["laplace", "t2", "logistic"]),
             "B": (["normal", "t3", "laplace"], ["t2", "logistic"])}
@@ -34,7 +40,7 @@ def evaluate(model, s):
     F, E = store[s]["F"], store[s]["E"]
     pick = model.predict(F)
     e = E[np.arange(len(E)), pick].astype(np.float64)
-    m = sim2.err_metrics(e)
+    m = est.err_metrics(e)
     m["picks"] = np.bincount(pick, minlength=len(EST)) / len(pick)
     return m
 
@@ -52,7 +58,7 @@ for st, (train_d, test_d) in SETTINGS.items():
             for name, m in (("rf", mr), ("logit", ml), ("rule", mt)):
                 out[(st, name, s)] = evaluate(m, s)
     mr = rf().fit(X, y); ml = logit().fit(X, y); mt = surrogate(mr, X)
-    trees[st] = dict(tree=mt, text=export_text(mt, feature_names=sim2.FEAT_NAMES), importances=mr.feature_importances_, rf=mr)
+    trees[st] = dict(tree=mt, text=export_text(mt, feature_names=est.FEAT_NAMES), importances=mr.feature_importances_, rf=mr)
     for s in te_ids:
         for name, m in (("rf", mr), ("logit", ml), ("rule", mt)):
             out[(st, name, s)] = evaluate(m, s)
@@ -65,7 +71,7 @@ for (st, name, s), m in out.items():
     for j, e in enumerate(EST): r[f"pick_{e}"] = m["picks"][j]
     rows.append(r)
 res = pd.DataFrame(rows).merge(df[["sid", "dist", "n", "eps", "otype", "k", "mse_oracle"]], on="sid")
-res.to_csv("results/ml2_results.csv", index=False)
-pickle.dump({k: {kk: vv for kk, vv in v.items() if kk != "rf"} for k, v in trees.items()}, open("results/ml2_trees.pkl", "wb"))
-pickle.dump(trees["B"]["rf"], open("results/rf_B.pkl", "wb"))
-pickle.dump(trees["A"]["rf"], open("results/rf_A.pkl", "wb"))
+res.to_csv(RESULTS / "ml_results.csv", index=False)
+pickle.dump({k: {kk: vv for kk, vv in v.items() if kk != "rf"} for k, v in trees.items()}, open(RESULTS / "ml_trees.pkl", "wb"))
+pickle.dump(trees["B"]["rf"], open(RESULTS / "rf_B.pkl", "wb"))
+pickle.dump(trees["A"]["rf"], open(RESULTS / "rf_A.pkl", "wb"))

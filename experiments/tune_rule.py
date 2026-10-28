@@ -1,13 +1,14 @@
-"""Простое правило: оценка Хьюбера, если доля за «усами» <= a и |средняя − медиана|/MAD <= b, иначе медиана.
+"""Шаг 3. Правило из двух условий: оценка Хьюбера, если доля за «усами» <= a и |средняя − медиана|/MAD <= b, иначе медиана.
 Пороги подбираются по сетке на обучающих сценариях (критерий — средняя относительная MSE
 с равными весами «чистых» и засорённых сценариев), качество проверяется на отложенных сценариях."""
 import numpy as np, pandas as pd, pickle
 from sklearn.model_selection import StratifiedGroupKFold
-import sim2
+from common import DATA, FIGURES, QUICK, RESULTS, quick
+from estimator_choice import estimators as est
 
-sc = pd.read_csv("results/scenarios2.csv")
-store = pickle.load(open("results/store2.pkl", "rb"))
-iM, iH = sim2.EST_NAMES.index("median"), sim2.EST_NAMES.index("huber")
+sc = pd.read_csv(RESULTS / "scenarios.csv")
+store = pickle.load(open(RESULTS / "store.pkl", "rb"))
+iM, iH = est.EST_NAMES.index("median"), est.EST_NAMES.index("huber")
 A_GRID = np.round(np.arange(0.02, 0.21, 0.01), 2)
 B_GRID = np.round(np.arange(0.05, 0.61, 0.05), 2)
 
@@ -24,7 +25,7 @@ def rule_mse(s):
             out[i, j] = np.where(use_h, eH, eM).mean()
     return out
 REL = {s: rule_mse(s) / sc.loc[s, "mse_oracle"] for s in sc.sid}
-pickle.dump(REL, open("results/rule_grid.pkl", "wb"))
+pickle.dump(REL, open(RESULTS / "rule_grid.pkl", "wb"))
 
 def objective(ids):
     clean = [REL[s] for s in ids if sc.loc[s, "eps"] == 0]
@@ -49,7 +50,7 @@ for st, (trd, ted) in SETTINGS.items():
     for s in sc.loc[sc.dist.isin(ted), "sid"]:
         res[(st, s)] = REL[s][i, j]
     res[(st, "thr")] = (A_GRID[i], B_GRID[j])
-pickle.dump(res, open("results/rule2_res.pkl", "wb"))
+pickle.dump(res, open(RESULTS / "rule_results.pkl", "wb"))
 
 def show(st, dists):
     d = sc[sc.dist.isin(dists)].copy()

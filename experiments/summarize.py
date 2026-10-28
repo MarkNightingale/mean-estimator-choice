@@ -1,10 +1,14 @@
-"""Сводные таблицы для текста статьи (v2)."""
+"""Шаг 4. Сводная таблица «метод × сценарий» (results/long.csv): отношение MSE, промахи, MAE.
+
+Добавляет правило из двух условий с порогами, подобранными на тех же частях перекрёстной проверки.
+"""
 import numpy as np, pandas as pd, pickle, json
 from sklearn.model_selection import StratifiedGroupKFold
-import sim2
-sc = pd.read_csv("results/scenarios2.csv"); r = pd.read_csv("results/ml2_results.csv")
-store = pickle.load(open("results/store2.pkl", "rb")); REL = pickle.load(open("results/rule_grid.pkl", "rb"))
-iM, iH = sim2.EST_NAMES.index("median"), sim2.EST_NAMES.index("huber")
+from common import DATA, FIGURES, QUICK, RESULTS, quick
+from estimator_choice import estimators as est
+sc = pd.read_csv(RESULTS / "scenarios.csv"); r = pd.read_csv(RESULTS / "ml_results.csv")
+store = pickle.load(open(RESULTS / "store.pkl", "rb")); REL = pickle.load(open(RESULTS / "rule_grid.pkl", "rb"))
+iM, iH = est.EST_NAMES.index("median"), est.EST_NAMES.index("huber")
 A_GRID = np.round(np.arange(0.02, 0.21, 0.01), 2); B_GRID = np.round(np.arange(0.05, 0.61, 0.05), 2)
 SET = {"A": (["normal", "t3"], ["laplace", "t2", "logistic"]), "B": (["normal", "t3", "laplace"], ["t2", "logistic"])}
 
@@ -16,10 +20,10 @@ def thr_of(ids):
 def rule_metrics(s, a, b):
     F, E = store[s]["F"], store[s]["E"].astype(float)
     use = (F[:, 5] <= a + 1e-9) & (F[:, 6] <= b)
-    return sim2.err_metrics(np.where(use, E[:, iH], E[:, iM]))
+    return est.err_metrics(np.where(use, E[:, iH], E[:, iM]))
 
 rows = []
-for e in sim2.EST_NAMES + ["hogg"]:
+for e in est.EST_NAMES + ["hogg"]:
     for _, q in sc.iterrows():
         for st in "AB":
             rows.append(dict(setting=st, method=e, sid=q.sid, mse=q[f"mse_{e}"], big=q[f"big_{e}"], mae=q[f"mae_{e}"]))
@@ -38,7 +42,7 @@ for st, (trd, ted) in SET.items():
         rows.append(dict(setting=st, method="rule", sid=s, **{k: v for k, v in rule_metrics(s, a, b).items() if k != "bias"}))
 L = pd.DataFrame(rows).merge(sc[["sid", "dist", "n", "eps", "otype", "k", "mse_oracle"]], on="sid")
 L["rel"] = L.mse / L.mse_oracle
-L.to_csv("results/long2.csv", index=False)
+L.to_csv(RESULTS / "long.csv", index=False)
 print("пороги", thr_full)
 
 def summ(d):
