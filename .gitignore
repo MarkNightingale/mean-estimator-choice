@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+# большие промежуточные файлы (создаются скриптами)
+*.pkl
+!results/rule_grid.pkl
+!results/rule2_res.pkl
